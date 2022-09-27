@@ -1,0 +1,83 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Build apk android"
+  lane :enterprise do
+    versionCode = File.read('./versionCode').to_i
+    localVersionNumber = get_local_version_number()
+    majorNumber = localVersionNumber[0]
+    minorNumber = localVersionNumber[1]
+    buildNumber = localVersionNumber[2]
+    
+    versionNumber = majorNumber.to_s + "." + minorNumber.to_s + "." + buildNumber.to_s
+    puts versionNumber
+    versionCode = versionCode + 1
+    build_android(versionNumber, versionCode, "com.democicd")
+  end
+
+  # build_android
+def build_android(versionNumber, versionCode, applicationId)
+  gradle(task: "assemble",
+         project_dir: "../android",
+         gradle_path: "gradlew",
+         build_type: "release",
+         properties: { 
+                        "versCode" => versionCode, 
+                        "versName" => versionNumber,
+                        "ANDROID_APP_IDENTIFIER" => applicationId,
+                        "APP_NAME" => "democicd"
+                      }
+          )
+end
+
+# custom method
+def get_local_version_number()
+  # if os == "android"
+     minorNumberPath = "./androidMinorNumber"
+     buildNumberPath = "./androidBuildNumber"
+  # else
+    #  minorNumberPath = "../../build/iosMinorNumber"
+    #  buildNumberPath = "../../build/iosBuildNumber"
+  # end
+  
+  #get current version and build from local
+  minorNumber = File.read(minorNumberPath)
+  buildNumber = File.read(buildNumberPath).to_i
+  # if ENV["BUILD_NUMBER"].to_i == -1
+  #    if minorNumber == ENV["MINOR"]
+  #       buildNumber = buildNumber + 1
+  #    else
+  #       buildNumber = 1
+  #    end
+  # else
+  #    buildNumber = ENV["BUILD_NUMBER"].to_i
+  # end
+  # minorNumber = ENV["MINOR"]
+  buildNumber = buildNumber + 1
+  #update local value
+  f = File.new(minorNumberPath, "w")
+  f.write(minorNumber)
+  f = File.new(buildNumberPath, "w")
+  f.write(buildNumber)
+  f.close
+  
+  return 5, minorNumber, buildNumber
+end
+
+end
