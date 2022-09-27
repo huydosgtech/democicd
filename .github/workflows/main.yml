@@ -27,7 +27,7 @@ jobs:
     - name: Build file apk 
       run: |
         cd android
-        bundle exec fastlane
+        fastlane android enterprise
       env:
         LANG: en_US.UTF-8
         LC_ALL: en_US.UTF-8

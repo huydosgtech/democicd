@@ -48,28 +48,21 @@ end
 
 # custom method
 def get_local_version_number()
-  # if os == "android"
-     minorNumberPath = "./androidMinorNumber"
-     buildNumberPath = "./androidBuildNumber"
-  # else
-    #  minorNumberPath = "../../build/iosMinorNumber"
-    #  buildNumberPath = "../../build/iosBuildNumber"
-  # end
-  
-  #get current version and build from local
+  minorNumberPath = "./androidMinorNumber"
+  buildNumberPath = "./androidBuildNumber"
+
   minorNumber = File.read(minorNumberPath)
   buildNumber = File.read(buildNumberPath).to_i
-  # if ENV["BUILD_NUMBER"].to_i == -1
-  #    if minorNumber == ENV["MINOR"]
-  #       buildNumber = buildNumber + 1
-  #    else
-  #       buildNumber = 1
-  #    end
-  # else
-  #    buildNumber = ENV["BUILD_NUMBER"].to_i
-  # end
-  # minorNumber = ENV["MINOR"]
-  buildNumber = buildNumber + 1
+  if ENV["BUILD_NUMBER"].to_i == -1
+     if minorNumber == ENV["MINOR"]
+        buildNumber = buildNumber + 1
+     else
+        buildNumber = 1
+     end
+  else
+     buildNumber = ENV["BUILD_NUMBER"].to_i
+  end
+  minorNumber = ENV["MINOR"]
   #update local value
   f = File.new(minorNumberPath, "w")
   f.write(minorNumber)
@@ -77,7 +70,7 @@ def get_local_version_number()
   f.write(buildNumber)
   f.close
   
-  return 5, minorNumber, buildNumber
+  return ENV["MAJOR"], minorNumber, buildNumber
 end
 
 end
