@@ -18,7 +18,21 @@ jobs:
       run: |
         cd ios
         fastlane new_build_number
-        fastlane push_version_changes
+        fastlane push_build_changes
+
+    - name: Run yarn
+      run: yarn
+    
+    #iOS setup
+    - name: Run pod
+      run: |
+        cd ios
+        pod install 
+
+    - name: Build file ipa iOS
+      run: |
+        cd ios
+        fastlane ios enterprise_lane
 
     #android setup
     - name: Set env
@@ -27,11 +41,9 @@ jobs:
         echo "LANG=en_US.UTF-8" >> $GITHUB_ENV
 
     - name: Run jetifier
-      run: |
-        yarn
-        yarn run jetify
+      run: yarn run jetify
 
-    - name: Build file apk 
+    - name: Build file apk Android
       run: |
         cd android
         fastlane android enterprise

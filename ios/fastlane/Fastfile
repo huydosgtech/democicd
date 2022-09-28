@@ -1,0 +1,56 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+ 
+  desc "Increase version"
+  lane :new_build_number do
+    increment_build_number(xcodeproj: "democicd.xcodeproj")
+  end
+
+  lane :push_changes do
+    version_number = get_version_number(xcodeproj: "democicd.xcodeproj", target: "democicd")
+    build_number = get_build_number(xcodeproj: "democicd.xcodeproj")
+    push_to_git_remote(remote_branch: git_branch, tags: false)
+    tag = "#{version_number}-#{build_number}"
+    add_git_tag(tag: tag)
+    push_git_tags(tag: tag)
+  end
+
+
+  desc "Commit tag"
+  lane :push_build_changes do
+    build_number = get_build_number(xcodeproj: "democicd.xcodeproj")
+    git_commit(
+      path: ["../"],
+      message: "Increase build number and version code to #{build_number}",
+    )
+    push_changes
+  end
+
+  desc "Build enterprise"
+  lane :enterprise_lane do |options|
+    gym(scheme: "democicd",
+    workspace:"democicd.xcworkspace",
+    export_xcargs: "-allowProvisioningUpdates",
+    clean: true,
+    include_bitcode: false,
+    export_method: "enterprise",
+    output_directory: "build/enterprise/")
+  end
+
+end
