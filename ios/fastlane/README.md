@@ -29,7 +29,7 @@ Increase version
 [bundle exec] fastlane ios push_changes
 ```
 
-Commit new tag
+
 
 ### ios push_build_changes
 
