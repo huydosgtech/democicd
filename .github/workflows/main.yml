@@ -14,6 +14,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Tag new version
+      run: |
+        cd ios
+        fastlane new_build_number
+        fastlane push_version_changes
+
+    #android setup
     - name: Set env
       run: |
         echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV

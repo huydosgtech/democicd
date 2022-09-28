@@ -37,6 +37,8 @@ def build_android(versionNumber, versionCode, applicationId)
          project_dir: "../android",
          gradle_path: "gradlew",
          build_type: "release",
+         print_command: true,
+         print_command_output: true,
          properties: { 
                         "versCode" => versionCode, 
                         "versName" => versionNumber,
